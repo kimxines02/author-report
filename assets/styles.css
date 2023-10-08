@@ -1,0 +1,28 @@
+select, input, button {
+  width: 100%;
+}
+.bg-light-blue {
+  background-color: #cfe2ff;
+}
+.h-title {
+  font-size: 22px;
+  padding: 15px 0 5px;
+}
+.text-sm,
+.select2-results__option--selectable,
+.select2-container--default .select2-results__option--disabled {
+  font-size: 13px !important;
+}
+.row-full-mid {
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+}
+.delete-btn {
+  color: #b5332a;
+}
+
+/* THIRD PARTY CUSTOM STYLE */
+.select2-container{
+  width: 66.666667% !important;
+}
