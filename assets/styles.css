@@ -21,6 +21,19 @@ select, input, button {
 .delete-btn {
   color: #b5332a;
 }
+#wrapFormHeader {
+  background: #FFF3E0;
+  margin: 1rem 0;
+  padding: 1rem;
+  border-radius: 5px;
+  border: 1px solid #FF9800;
+}
+#formImportAuthor {
+  border: 1px solid gray;
+  border-radius: 5px;
+  padding: 1rem;
+  background: #E1F5FE;
+}
 
 /* THIRD PARTY CUSTOM STYLE */
 .select2-container{

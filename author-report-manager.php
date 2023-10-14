@@ -6,6 +6,7 @@ Version: 1.0
 Author: Chris Y.
 */
 
+
 // Hook to run plugin's initialization function
 add_action('init', 'author_report_manager_init');
 
@@ -89,36 +90,46 @@ function author_report_manager_display() {
     $authors = author_report_manager_read();
     $allBooks = get_all_products();
     $allUsers = get_all_users();
+    include(plugin_dir_path(__FILE__) . 'functions.php');
     include(plugin_dir_path(__FILE__) . 'dashboard.php');
     return ob_get_clean(); 
 }
 
-// Create a function to Implement code to add new records to the custom table
-function author_report_manager_create() {
-  global $wpdb;
-  $table_name = $wpdb->prefix . 'cb_author_report';
+/*
+add_action('wp_ajax_author_report_manager_create', 'author_report_manager_create_function');
+add_action('wp_ajax_nopriv_author_report_manager_create', 'author_report_manager_create_function');
 
-  $wpdb->insert(
-    $table_name,
-    array(
-      'author_id' => $_POST['author_id'],
-      'book_id' => $_POST['book_id'],
-      'category' => $_POST['category'],
-      'isbn' => $_POST['isbn'],
-      'format_s' => $_POST['format_s'],
-      'retail_price' => $_POST['retail_price'],
-      'printing_cost' => $_POST['printing_cost'],
-      'royalty' => $_POST['royalty'],
-      'units_sold' => $_POST['units_sold'],
-      'date_published' => $_POST['date_published'],
-      'quartercb' => $_POST['quartercb'],
-      'user_payment_method' => $_POST['user_payment_method'],
-      'payment_info' => $_POST['payment_info'],
-      'country' => $_POST['country']
-    )
-  );
+function author_report_manager_create_function() {
+    check_admin_referer('my_nonce_action', 'my_nonce');
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'cb_author_report';
+
+    $wpdb->insert(
+      $table_name,
+      array(
+        'author_id' => sanitize_text_field($_POST['author_id']),
+        'book_id' => sanitize_text_field($_POST['book_id']),
+        'category' => sanitize_text_field($_POST['category']),
+        'isbn' => sanitize_text_field($_POST['isbn']),
+        'format_s' => sanitize_text_field($_POST['format_s']),
+        'retail_price' => sanitize_text_field($_POST['retail_price']),
+        'printing_cost' => sanitize_text_field($_POST['printing_cost']),
+        'royalty' => sanitize_text_field($_POST['royalty']),
+        'units_sold' => sanitize_text_field($_POST['units_sold']),
+        'date_published' => sanitize_text_field($_POST['date_published']),
+        'quartercb' => sanitize_text_field($_POST['quartercb']),
+        'user_payment_method' => sanitize_text_field($_POST['user_payment_method']),
+        'payment_info' => sanitize_text_field($_POST['payment_info']),
+        'country' => sanitize_text_field($_POST['country'])
+      )
+    );
+
+    // Return a response (e.g., for success or error)
+    echo 'Form submitted successfully! Received data: ' . $table_name;
+
+    wp_die(); // Always exit at the end of an Ajax call
 }
-
+*/
 // Create a function that Implement code to display all data
 function author_report_manager_read() {
   global $wpdb;
@@ -189,4 +200,69 @@ function get_all_users() {
   );
   $users = get_users($args);
   return $users;
+}
+
+// write code if isset form submit save the data in the database
+if (isset($_POST['submit'])) {
+  global $wpdb;
+  $table_name = $wpdb->prefix . 'cb_author_report';
+
+  $wpdb->insert(
+    $table_name,
+    array(
+      'author_id' => sanitize_text_field($_POST['author_id']),
+      'book_id' => sanitize_text_field($_POST['book_id']),
+      'category' => sanitize_text_field($_POST['category']),
+      'isbn' => sanitize_text_field($_POST['isbn']),
+      'format_s' => sanitize_text_field($_POST['format_s']),
+      'retail_price' => sanitize_text_field($_POST['retail_price']),
+      'printing_cost' => sanitize_text_field($_POST['printing_cost']),
+      'royalty' => sanitize_text_field($_POST['royalty']),
+      'units_sold' => sanitize_text_field($_POST['units_sold']),
+      'date_published' => sanitize_text_field($_POST['date_published']),
+      'quartercb' => sanitize_text_field($_POST['quartercb']),
+      'user_payment_method' => sanitize_text_field($_POST['user_payment_method']),
+      'payment_info' => sanitize_text_field($_POST['payment_info']),
+      'country' => sanitize_text_field($_POST['country'])
+    )
+  );
+}
+
+// write a function that save data from imported csv file
+function author_report_manager_import_csv() {
+  global $wpdb;
+  $table_name = $wpdb->prefix . 'cb_author_report';
+
+  if (isset($_POST['import'])) {
+    $file = $_FILES['file']['tmp_name'];
+    $handle = fopen($file, 'r');
+    $row = 1;
+    while (($importData = fgetcsv($handle, 1000, ',')) !== FALSE) {
+      if ($row == 1) {
+        $row++;
+        continue;
+      }
+      $wpdb->insert(
+        $table_name,
+        array(
+          'author_id' => sanitize_text_field($importData[0]),
+          'book_id' => sanitize_text_field($importData[1]),
+          'category' => sanitize_text_field($importData[2]),
+          'isbn' => sanitize_text_field($importData[3]),
+          'format_s' => sanitize_text_field($importData[4]),
+          'retail_price' => sanitize_text_field($importData[5]),
+          'printing_cost' => sanitize_text_field($importData[6]),
+          'royalty' => sanitize_text_field($importData[7]),
+          'units_sold' => sanitize_text_field($importData[8]),
+          'date_published' => sanitize_text_field($importData[9]),
+          'quartercb' => sanitize_text_field($importData[10]),
+          'user_payment_method' => sanitize_text_field($importData[11]),
+          'payment_info' => sanitize_text_field($importData[12]),
+          'country' => sanitize_text_field($importData[13]),
+          'country' => sanitize_text_field($importData[14]),
+        )
+      );
+    }
+    fclose($handle);
+  }
 }
